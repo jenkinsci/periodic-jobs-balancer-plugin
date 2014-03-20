@@ -1,0 +1,334 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"  xmlns:g="glide"  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+<html>
+	<head>
+		<title>Highcharts Example</title>
+		
+		
+		<!-- 1. Add these JavaScript inclusions in the head of your page -->
+		
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+		
+		
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>		
+		<script type="text/javascript" src="${rootURL}/plugin/periodic-projects-scanner-balancer/js/highcharts.js"></script>
+		<script type="text/javascript" src="${rootURL}/plugin/periodic-projects-scanner-balancer/js/jquery.ptTimeSelect.js"></script>
+		<script type="text/javascript" src="${rootURL}/plugin/periodic-projects-scanner-balancer/js/jquery.dataTables.js"></script>
+		<script type="text/javascript" src="${rootURL}/plugin/periodic-projects-scanner-balancer/js/jquery.themes.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="${rootURL}/plugin/periodic-projects-scanner-balancer/css/jquery.ptTimeSelect.css" />
+		<link rel="stylesheet" type="text/css" href="${rootURL}/plugin/periodic-projects-scanner-balancer/css/demo_table.css" />
+		<!-- <link rel="stylesheet" type="text/css" href="${rootURL}/plugin/projects-scanner/css/jquery.themes.css" /> -->
+		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/dark-hive/jquery-ui.css" />
+		 <style>
+			.ui-tabs-vertical { width: 55em; }
+			.ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 12em; }
+			.ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
+			.ui-tabs-vertical .ui-tabs-nav li a { display:block; }
+			.ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; border-right-width: 1px; }
+			.ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 84em;}
+			</style>
+		
+		
+		<!-- 1a) Optional: add a theme file -->
+		<!--
+			<script type="text/javascript" src="../js/themes/gray.js"></script>
+		-->
+		
+		<!-- 1b) Optional: the exporting module -->
+		<script type="text/javascript" src="${rootURL}/plugin/periodic-projects-scanner-balancer/js/modules/exporting.js"></script>
+		
+		<!-- 2. Add the JavaScript to initialize the chart on document ready -->
+		
+		
+		<script type="text/javascript">
+		var dataSeries = [];
+		function getData(url, chartContainerName){
+		
+			$.getJSON(url, function( data ) {			
+			$.each( data, function( key, val ) {
+				dataSeries.push(val);
+			});}) .done(function( data ) {
+				
+				console.log( "JSON Done ");
+				drawAreaChart('Fusion Periodic Projects Load Distribution', 'Number of Builds Triggered', 'Build Count',
+				chartContainerName);
+				
+			});
+		
+		
+		};
+		
+		// This function will pull the drill down data from the plugin, then will populate it on the dialog box
+		function getDrillDownTable(){
+			   // Populates the table from the Plugin to display the drilldown on the dialog box
+			     $('#drilldown').dataTable( {
+					"bProcessing": true,
+					"bJQueryUI": true,
+        			"sPaginationType": "full_numbers"
+										
+				} );
+				 $('#drilldown').show();
+			                        
+			      $("#dialog-message").dialog({
+			                          		modal: true,
+										    draggable: false,
+										    resizable: false,
+										    position: ['center', 'top'],
+										    show: 'blind',
+										    hide: 'blind',
+										    width: 900,
+										    dialogClass: 'ui-dialog-osx',
+										    buttons: {
+										        "Ok": function() {
+										            $(this).dialog("close");
+										        }
+										    }
+										});                   
+			                        
+		};
+					
+			var chart;
+			
+		function drawAreaChart(title, yAxisTitle, seriesTitle, chartContainerName){
+			chart = new Highcharts.Chart({
+					chart: {
+						renderTo: chartContainerName, 
+						defaultSeriesType: 'column'
+					},
+					title: {
+						text: title
+					},
+					xAxis: {
+						labels: {
+							formatter: function() {
+								return this.value; // clean, unformatted number for year
+							}
+						}							
+					},
+					yAxis: {
+						title: {
+							text: yAxisTitle
+						},
+						labels: {
+							formatter: function() {
+								return this.value / 1000 +'k';
+							}
+						}
+					},
+					tooltip: {
+						formatter: function() {
+							return this.series.name +' produced <b>'+
+								Highcharts.numberFormat(this.y, 0) +'</b><br/>warheads in '+ this.x;
+						}
+					},
+					plotOptions: {
+						
+						series: {
+			                cursor: 'pointer',
+			                point: {
+			                    events: {
+			                        click: function(event) {
+			                        	getDrillDownTable();
+			                          //   alert('x: ' + event.chartX + ', y: ' + event.chartY);
+			                          
+			                        }
+			                    }
+			                }
+			            }
+						
+					},
+					series: [{
+						name: seriesTitle,
+						data: dataSeries
+					}]
+				});
+		
+		}	
+			
+			$(document).ready(function() {
+				
+				
+			//	drawChart(); // Method to draw the chart
+
+			$( "#datepicker" ).val("");	
+						
+			$( "#datepicker2" ).val("");	
+			
+			 $('#drilldown').hide();
+			
+			});
+				
+		</script>	
+		
+		
+	</head>
+	<body>
+		
+		<div id="toolbar" class="ui-widget-header ui-corner-all" style="width: 1740px">
+			<button id="beginning">Go back to Plugin Home</button>		
+		</div>
+		 		
+		
+		<!-- 3. Add the container -->
+		 
+		<div id="tabs" style="width: 1740px; height: 1100px">
+		<ul>
+		<li><a href="#tabs-1">Overall Analysis</a></li>
+		<li><a href="#tabs-2">Maven</a></li>
+		<li><a href="#tabs-3">Free Style</a></li>
+		</ul>
+		<div id="tabs-1">
+			<div id="toolbar1" class="ui-widget-header ui-corner-all">
+				<table>
+				<tr>
+				<td><p>Start Date: <input type="text" id="datepicker" /></p></td>
+				<td><p>End Date   : <input type="text" id="datepicker2" /></p></td>
+				<td><button id="metrics">Refresh Load Metrics</button></td>				
+				</tr>
+				</table>				
+			<script>
+			var startTime;
+			var endTime;
+			
+			$( "#beginning" ).button().click(function(){
+			
+				// Performs an AJAX call 
+				// $.ajax({url:"/scanner-plugin/getProjectLoadMetrics"});
+				
+				// then goes back to home
+				 window.location = "/scanner-plugin";
+			});
+			
+			$( "#metrics" ).button().click(function(){
+				// Performs an AJAX call
+				
+								
+				//$.ajax({url:"/scanner-plugin/getProjectLoadMetrics"});
+				
+				console.log(startTime);
+				console.log(endTime);
+				
+				getData("/scanner-plugin/getProjectLoadMetrics",'loadmetrics');
+								
+			});
+			
+			 $( "#datepicker" ).ptTimeSelect({
+			 	
+			 	 onBeforeShow: function(i){
+			 	 startTime =  $(i).val();
+			 	 },
+			 	onClose: function(i) {
+                 startTime =  $(i).val();
+                }
+			 
+			 }); 				//datepicker();
+			 $( "#datepicker2" ).ptTimeSelect({
+			 	
+			 	onBeforeShow: function(i){
+			 	 endTime =  $(i).val();
+			 	 },
+			 	onClose: function(i) {
+                 endTime =  $(i).val();
+                }
+			 
+			 });				//.datepicker();
+			 
+			 
+			 
+			</script>
+			</div>
+			<br/>
+			<div id="loadmetrics" style="width: 1200px; height: 400px"></div>
+			<div id="dialog-message" title="Machine Drill Down">
+    <table id="drilldown" cellpadding="0" cellspacing="0" border="0" class="display">
+    <thead>
+        <tr>
+            <th>Machine Name</th>
+            <th>Busy Executors</th>
+            <th>Free Executors</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>fusionbldlvs01</td>
+            <td>1</td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>fusionbldlvs02</td>
+            <td>1</td>
+            <td>0</td>
+        </tr>
+    </tbody>
+</table>
+    	 
+	</div>	
+			
+				<div id="toolbar2" class="ui-widget-header ui-corner-all">
+				<table>
+				<tr>
+				<td><p>Start Time: <input type="text" id="datepicker3" /></p></td>
+				<td><p>End Time  : <input type="text" id="datepicker4" /></p></td>
+				<td><button id="buildcounts">Refresh Build Counts</button></td>				
+				</tr>
+				</table>				
+				<script>
+				var startTime2;
+				var endTime2;
+				
+				$( "#buildcounts" ).button().click(function(){
+					// Performs an AJAX call
+					
+									
+					//$.ajax({url:"/scanner-plugin/getProjectLoadMetrics"});
+					
+					console.log(startTime2);
+					console.log(endTime2);
+					
+				//	getData("/scanner-plugin/getProjectLoadMetrics",'loadmetrics');
+									
+				});
+				
+				 $( "#datepicker3" ).ptTimeSelect({
+				 	
+				 	 onBeforeShow: function(i){
+				 	 startTime2 =  $(i).val();
+				 	 },
+				 	onClose: function(i) {
+	                 startTime2 =  $(i).val();
+	                }
+				 
+				 }); 				//datepicker();
+				 $( "#datepicker4" ).ptTimeSelect({
+				 	
+				 	onBeforeShow: function(i){
+				 	 endTime2 =  $(i).val();
+				 	 },
+				 	onClose: function(i) {
+	                 endTime2 =  $(i).val();
+	                }
+				 
+				 });				//.datepicker();
+				 
+				</script>
+				</div>
+			<br/>
+			<br/>
+			<div id="buildcountmetrics" style="width: 800px; height: 400px; margin: 0 auto"></div>
+			
+		</div>
+		<div id="tabs-2">
+				<p>Maven Metrics will be displayed Here</p>
+		</div>
+		<div id="tabs-3">
+		<p>Free Style Metrics will be displayed Here</p>
+		</div>
+		</div>
+		 <script>
+			 $( "#tabs" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
+				$( "#tabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );		
+			</script> 				
+			
+	</body>
+	</html>
+</j:jelly>

@@ -1,0 +1,39 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <l:layout title="${it.DisplayName}" norefresh="true" permission="${it.requiredPermission}">
+        <l:side-panel>
+            <l:tasks>
+                <l:task icon="images/24x24/up.png" href="${rootURL}/" title="${%Back to Dashboard}"/>
+                <l:task icon="images/24x24/folder.png" href="viewPeriodicProjectsRedirect" title="${%View Periodic Projects}"/>
+                <l:task icon="images/24x24/monitor.png" href="balancePeriodicProjectsRedirect" title="${%Periodic Projects Balancing}"/>
+                <l:task icon="images/24x24/gear2.png" href="viewPeriodicProjectsAnalyticsRedirect" title="${%view Analytics}"/>
+             </l:tasks>
+        	</l:side-panel>
+        <l:main-panel>
+            <h2><img src="${rootURL}/plugin/periodic-projects-scanner-balancer/icons/icon_analysis_small.png" /> ${it.displayName}</h2>
+           
+        <div style="width:auto; float:center; margin:12px;">
+		<div class="test-trend-caption">
+		  ${%Periodic Projects Time Distribution}
+		</div>		
+		</div>
+	
+	<div>
+	
+		<form action="calculatePeriodicProjectsLoadDistribution">
+	      <input type="hidden" name="name" value="${h.name}"/>
+	      <f:submit value="${%Refresh Load Distribution Analysis}" />    
+      </form> 		
+		
+		<j:choose>
+			<j:when test="${it.graphReady}">
+		  		<img src="overallGraph/png" lazymap="overallGraph/map"/>
+		  </j:when>
+		  <j:otherwise>
+		  		  
+		  </j:otherwise>
+		</j:choose> 
+		</div>
+		
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

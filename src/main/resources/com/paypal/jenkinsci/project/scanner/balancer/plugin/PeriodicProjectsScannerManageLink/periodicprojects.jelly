@@ -1,0 +1,83 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <l:layout title="${it.DisplayName}" norefresh="true" permission="${it.requiredPermission}">
+      <st:include page="sidepanel.jelly"/>
+      
+        <l:main-panel>
+            <h2><img src="${rootURL}/plugin/periodic-projects-scanner-balancer/icons/workspace.png" /> ${%Drill Down of All Periodic Projects in this Jenkins CI instance}</h2>
+            
+        
+    <j:choose>
+		<j:when test="${it.dataReady}">
+			 <j:set var="summaries" value="${it.getProjectFrequency()}" />     
+		
+		 <table id="Summary" class="sortable" style="border:1px solid black;border-collapse:collapse;">
+     	<tr>
+          <th style="border:1px solid black;">${%Frequency Level}</th>
+          <th style="border:1px solid black;">${%Frequency Type}</th>
+          <th style="border:1px solid black;">${%Projects Count}</th>
+          <th style="border:1px solid black;">${%Total Builds Count}</th>
+          <th style="border:1px solid black;">${%View Projects}</th>          
+      </tr>
+      
+       <j:forEach var="q" items="${summaries}">
+        <tr>
+        <td style="border:1px solid black;" align="center"><img src="${q.getFrequencyIconFileName()}" /></td>
+        <td style="border:1px solid black;" align="center"><font size="4">${q.getFrequencyLevel()}</font></td>
+        <td style="border:1px solid black;" align="center"><font size="4">${q.getJobCount()}</font></td>
+        <td style="border:1px solid black;" align="center"><font size="4">${q.getBuildCount()}</font></td>
+        <td style="border:1px solid black;" align="center"><font size="4">
+		<a href="${rootURL}/${it.UrlName}/filterProjectsByFrequency?selectedFrequencyLevel=${q.getFrequencyLevel()}">${%View Related Projects}</a></font>
+		</td>                
+        </tr>        
+      </j:forEach>
+      
+      
+     	</table>
+		</j:when>
+		<j:otherwise>
+		</j:otherwise>
+	</j:choose>	    
+            
+		<br/>            
+		<j:choose>
+		<j:when test="${it.dataReady}">
+		
+	 <j:set var="projects" value="${it.getPeriodicJobList()}" />     
+          
+     <table id="Results" class="sortable pane bigtable" width="1200" style="border:1px solid black;border-collapse:collapse;">
+     <tr>
+          <th style="border:1px solid black;">${%Frequency Level}</th>
+          <th style="border:1px solid black;">${%Daily Frequency}</th>
+          <th style="border:1px solid black;">${%Project name}</th>
+          <th style="border:1px solid black;">${%Cron Schedule}</th>
+          <th style="border:1px solid black;">${%Time Schedule}</th>
+          <th style="border:1px solid black;">${%Build Count}</th>
+          <th style="border:1px solid black;">${%Average Build Time (Minutes)}</th>
+      </tr>
+      
+       <j:forEach var="p" items="${projects}">
+        <tr>
+        <td style="border:1px solid black;" align="center"><img src="${p.getIconFileName()}" title="${p.getFrequency()}"/></td>
+        <td style="border:1px solid black;" align="center"><font size="4">${p.getProjectFrequencyrCount()}</font></td>
+        <td style="border:1px solid black;"><b><a href="${p.getUrl()}">${p.getJobName()}</a></b> </td>        	
+        <td style="border:1px solid black;">${p.getSpec()}</td>
+        <td style="border:1px solid black;">${p.getProjectsTriggersScheduleAsString()}</td>
+        <td style="border:1px solid black;">${p.getBuildCount()}</td>
+        <td style="border:1px solid black;">${p.getBuildDurationAverage()}</td>         
+        </tr>
+      </j:forEach>
+      
+     	</table>
+      </j:when>
+       <j:otherwise>
+       
+       <script language="javascript">
+			         alert("Data for calculating Balanced Periodic Projects Distribution Graph is not ready \n Please click Calculate Load Distribution");
+		</script>
+       		
+		  </j:otherwise>
+		</j:choose>  
+    	
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

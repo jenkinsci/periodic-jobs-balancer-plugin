@@ -1,0 +1,123 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <l:layout title="${it.DisplayName}" norefresh="true" permission="${it.requiredPermission}">
+    <j:set var="descriptor" value="${it.descriptor}"/>
+      <st:include page="sidepanel.jelly"/>
+       <l:main-panel>
+            <h2><img src="${rootURL}/plugin/periodic-projects-scanner-balancer/icons/balancing.png" /> ${%Periodic Jobs Time Trigger Balancing}</h2>
+	
+<form action="calculateBalancedPeriodicProjectsLoadDistribution">
+<table style='width:100%'>
+<f:section title="Midnight Periodical Projects Load Balancing">
+	<f:entry title="Balancing Time Window (Hours)">
+		<select id="balancingWindow" name="balancingWindow" style="width:25%"  value="${it.balancingWindow}">
+		
+		<j:forEach var="windowOption" items="${descriptor.balacingWindowOptions}">
+				<j:choose>
+					<j:when test="${it.balancingWindow == windowOption}">
+					    <option value="${windowOption}" selected="true">${windowOption}</option>
+					</j:when>
+					<j:otherwise>
+					    <option value="${windowOption}">${windowOption}</option>
+					</j:otherwise>
+			    </j:choose>
+			</j:forEach>		
+		
+		</select>
+	</f:entry>
+</f:section>
+<f:section title="Hourly Periodical Projects Load Balancing"> 
+	<f:entry title="Hot Spots Aoidance Options">
+		<select id="hotspotsAvoidance" name="hotspotsAvoidance" style="width:25%" value="${it.hotspotsAvoidance}">
+			<j:forEach var="avoidanceOption" items="${descriptor.hostSpotAvoidanceOptions}">
+				<j:choose>
+					<j:when test="${it.hotspotsAvoidance == avoidanceOption}">
+					    <option value="${hotspotsAvoidance}" selected="true">${avoidanceOption}</option>
+					</j:when>
+					<j:otherwise>
+					    <option value="${hotspotsAvoidance}">${avoidanceOption}</option>
+					</j:otherwise>
+			    </j:choose>
+			</j:forEach>		
+		</select>		
+	</f:entry>
+	<f:entry title="Frequency within the Hour Reduction Factor">
+		<select id="minutesBalancingFactor" name="minutesBalancingFactor" style="width:25%" value="${it.minutesBalancingFactor}">		
+			<j:forEach var="minutesFactor" items="${descriptor.minutesBalancingOptions}">
+				<j:choose>
+					<j:when test="${it.minutesBalancingFactor == minutesFactor}">
+					    <option value="${minutesBalancingFactor}" selected="true">${minutesFactor}</option>
+					</j:when>
+					<j:otherwise>
+					    <option value="${minutesBalancingFactor}">${minutesFactor}</option>
+					</j:otherwise>
+			    </j:choose>
+			</j:forEach>	
+	</select>
+	</f:entry>
+	<f:entry title="Hourly Frequency within the Day Reduction Factor ">
+		<select id="hoursBalancingFactor" name="hoursBalancingFactor" style="width:25%" value="${it.hoursBalancingFactor}">
+		<j:forEach var="hoursFactor" items="${descriptor.hourlyBalancingOptions}">
+				<j:choose>
+					<j:when test="${it.hoursBalancingFactor == hoursFactor}">
+					    <option value="${hoursBalancingFactor}" selected="true">${hoursFactor}</option>
+					</j:when>
+					<j:otherwise>
+					    <option value="${hoursBalancingFactor}">${hoursFactor}</option>
+					</j:otherwise>
+			    </j:choose>
+			</j:forEach>
+		</select>		
+		
+	</f:entry>
+	
+</f:section>
+</table>
+	
+	<j:choose>
+			<j:when test="${it.balancedGraphReady}">
+		  		<img src="balancedGraph/png" lazymap="balancedGraph/map"/>
+		  </j:when>
+		  <j:otherwise>		  	 
+		  </j:otherwise>
+		</j:choose> 
+	
+    		
+	      <input type="hidden" name="name" value="${h.name}"/>
+	      <f:submit value="${%Calculate Balanced Load Distribution}" />    
+	   	      
+   </form>  	
+ 
+	
+	<form action="balancePeriodicProjectsSchedule">
+		<table style='width:100%'>
+		<f:section title="Periodic Projects Load Balancing">
+			<f:entry title="">
+				  <input type="hidden" name="name" value="${h.name}"/>
+				  <f:submit value="${%Perform}"/>			
+			</f:entry>
+			<f:entry title="Projects Balancing Log">
+					   <f:textarea id="loadBalancingLog" value="${it.loadBalancingLog}" disabled="true" />
+			</f:entry>			
+			
+		</f:section>
+		</table>		 
+	 </form>
+ 
+	  <form action="revertPeriodicProjectsSchedule">
+		<table style='width:100%'>
+		<f:section title="Revert Periodic Projects Load Balancing">			
+			<f:entry title="">
+				  <input type="hidden" name="name" value="${h.name}"/>				  
+		      <f:submit value="${%Revert}" disabled="true"/>  
+			</f:entry>
+			<f:entry title="Projects Balancing Reversion Log">
+					   <f:textarea id="scheduledReverted" value="${it.loadRevertLog}" disabled="true" />
+			</f:entry>		
+			
+		</f:section>		
+		</table> 
+	 </form>
+    	
+   </l:main-panel>
+  </l:layout>
+</j:jelly>
