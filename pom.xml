@@ -11,14 +11,25 @@
   <artifactId>periodic-projects-scanner-balancer</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>hpi</packaging>
-  
+  <url>http://wiki.jenkins-ci.org/display/JENKINS/periodic-jobs-balancer+plugin</url>
   
   
   
    <properties>
            <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
            <powermock.version>1.4.12</powermock.version>
-</properties>
+    </properties>
+    <developers>
+        <developer>
+            <id>otahboub</id>
+            <name>Omar Tahboub</name>
+        </developer>
+        <developer>
+            <id>smadan</id>
+            <name>Smarth Madan</name>
+            <email>smadan@paypal.com</email>
+        </developer>
+    </developers>
   
    <dependencies>
     <dependency>
@@ -48,9 +59,13 @@
                <artifactId>powermock-api-mockito</artifactId> 
                <version>1.4.10</version>
         </dependency>
-       
-       
    </dependencies>
+
+    <scm>
+        <connection>scm:git:ssh://github.com/jenkinsci/periodic-jobs-balancer-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/periodic-jobs-balancer-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/periodic-jobs-balancer-plugin</url>
+    </scm>
    
    <build>
 	   <plugins>

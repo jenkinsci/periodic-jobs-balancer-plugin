@@ -7,37 +7,37 @@ import java.util.Properties;
 
 public final class PropertiesUtil {
 
-	private static PropertiesUtil instance;
-	private final String filename = "config.properties";
-	private Properties properties;
+    private static PropertiesUtil instance;
+    private final String filename = "config.properties";
+    private Properties properties;
 
-	public static PropertiesUtil getInstance() {
+    public static PropertiesUtil getInstance() {
 
-		if (instance == null) {
-			instance = new PropertiesUtil();
-		}
-		return instance;
-	}
+        if (instance == null) {
+            instance = new PropertiesUtil();
+        }
+        return instance;
+    }
 
-	private PropertiesUtil() {
+    private PropertiesUtil() {
 
-		properties = new Properties();
-		InputStream input = null;
+        properties = new Properties();
+        InputStream input = null;
 
-		input = PropertiesUtil.class.getClassLoader().getResourceAsStream(
-				filename);
-				// load a properties file from class path, inside static method
-		try {
-			properties.load(input);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println(e.getMessage());
+        input = PropertiesUtil.class.getClassLoader().getResourceAsStream(
+                filename);
+        // load a properties file from class path, inside static method
+        try {
+            properties.load(input);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            System.out.println(e.getMessage());
 
-		}
-	}
+        }
+    }
 
-	public String getProperty(String propertyName) {
-		return properties.getProperty(propertyName);
-	}
+    public String getProperty(String propertyName) {
+        return properties.getProperty(propertyName);
+    }
 
 }
